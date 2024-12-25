@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from './components/AuthProvider';
 import { createUserDocument, checkUsernameAvailability } from './firebase/utils';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { signup, login, resetPassword } = useAuth();
 
@@ -56,7 +58,7 @@ export default function Home() {
         }
 
         const userCredential = await signup(formData.email, formData.password);
-        
+
         await createUserDocument(userCredential.user.uid, {
           name: formData.name,
           userName: formData.userName,
@@ -93,14 +95,13 @@ export default function Home() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-800">
-        {/* <div className="max-w-7xl mx-auto px-4 py-4"> */}
         <motion.div
-                                className="max-w-7xl mx-auto px-4 py-4"
-                                variants={fadeInLeft}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                            >
+          className="max-w-7xl mx-auto px-4 py-4"
+          variants={fadeInLeft}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="relative w-8 h-8">
@@ -113,19 +114,27 @@ export default function Home() {
                 />
               </div>
               <h1 className="text-2xl font-bold">Expressly</h1>
-              <p
-            className={`text-xs ml-2 mt-7`}
-          >
-            By{" "}
-            <Link
-              href="https://niketchawla.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Niket Chawla
-            </Link>
-          </p>
+              <p className="text-xs ml-2 mt-7">
+                By{" "}
+                <Link
+                  href="https://niketchawla.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Niket Chawla
+                </Link>
+              </p>
             </div>
+
+            {/* Add the development-only button */}
+            {process.env.NEXT_PUBLIC_ENV === 'development' && (
+              <Link
+                href="/our-members-panel"
+                className="px-4 py-2 bg-[#2b9676] hover:bg-[#14a77b] rounded-lg text-sm font-medium transition-colors duration-200"
+              >
+                Our Members
+              </Link>
+            )}
           </div>
         </motion.div>
       </header>
@@ -135,15 +144,15 @@ export default function Home() {
         {/* Banner */}
         {/* <div className="hidden md:flex md:w-1/2 bg-[#373643] items-center justify-center"> */}
         <motion.div
-                                className="hidden md:flex md:w-1/2 bg-[#373643] items-center justify-center"
-                                variants={fadeInUp}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                            >
+          className="hidden md:flex md:w-1/2 bg-[#373643] items-center justify-center"
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {/* <h2 className="text-4xl font-bold text-white">Welcome to Expressly</h2> */}
-          <img src='/expressly-logo.png'/>
-          </motion.div>
+          <img src='/expressly-logo.png' />
+        </motion.div>
         {/* </div> */}
 
         {/* Form */}
@@ -233,7 +242,7 @@ export default function Home() {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium mb-1">
                   Password
                 </label>
@@ -244,6 +253,28 @@ export default function Home() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+              </div> */}
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="w-full px-3 py-2 bg-[#252525] border border-gray-800 rounded-lg focus:ring-2 focus:ring-[#17CC97] focus:border-[#17CC97] pr-10"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  >
+                    {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                  </button>
+                </div>
               </div>
 
               {isLogin && (
@@ -264,8 +295,8 @@ export default function Home() {
                 type="submit"
                 disabled={loading}
                 className={`w-full py-2 px-4 rounded-lg font-medium 
-                  ${loading 
-                    ? 'bg-[#17CC97]/50 cursor-not-allowed' 
+                  ${loading
+                    ? 'bg-[#17CC97]/50 cursor-not-allowed'
                     : 'bg-[#2b9676] hover:bg-[#14a77b]'
                   } transition-colors duration-200`}
               >
