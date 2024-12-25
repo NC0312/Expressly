@@ -16,7 +16,7 @@ export const metadata = {
   title: "Expressly",
   description: "Expressly -- A social media platform for the modern age.",
   icons: {
-    icon: "/logo.png",
+    icon: "/expressly-icon.png",
   },
 };
 
